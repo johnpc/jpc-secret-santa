@@ -171,3 +171,28 @@ export function useDeleteParticipant() {
     },
   });
 }
+
+export function useUpdateAssignment() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      giverId,
+      receiverId,
+      groupId,
+    }: {
+      giverId: string;
+      receiverId: string;
+      groupId: string;
+    }) => {
+      await client.models.Participant.update({
+        id: giverId,
+        assignedToId: receiverId,
+      });
+      return { groupId };
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['participants', data.groupId] });
+    },
+  });
+}

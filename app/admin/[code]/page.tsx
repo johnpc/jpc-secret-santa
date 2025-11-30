@@ -5,6 +5,7 @@ import { useGroup } from '@/hooks/useGroups';
 import { AddParticipant } from '@/components/AddParticipant';
 import { ParticipantList } from '@/components/ParticipantList';
 import { AssignButton } from '@/components/AssignButton';
+import { ManualAssign } from '@/components/ManualAssign';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function AdminPage({ params }: { params: Promise<{ code: string }> }) {
@@ -29,6 +30,8 @@ export default function AdminPage({ params }: { params: Promise<{ code: string }
           </div>
         </CardContent>
       </Card>
+
+      {group.isAssigned && <ManualAssign groupId={group.id} />}
 
       <ParticipantList groupId={group.id} showAssignments={group.isAssigned || false} allowDelete />
     </div>

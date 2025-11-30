@@ -30,7 +30,7 @@ export default function AdminPage({ params }: { params: Promise<{ code: string }
         </CardContent>
       </Card>
 
-      <ParticipantList groupId={group.id} showAssignments={group.isAssigned || false} />
+      <ParticipantList groupId={group.id} showAssignments={group.isAssigned || false} allowDelete />
     </div>
   );
 }

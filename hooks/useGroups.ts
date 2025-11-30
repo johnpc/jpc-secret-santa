@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { generateClient } from 'aws-amplify/data';
+import { useEffect } from 'react';
 import type { Schema } from '@/amplify/data/resource';
 
 const client = generateClient<Schema>();
@@ -15,6 +16,22 @@ export function useGroups() {
 }
 
 export function useGroup(adminCode: string) {
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (!adminCode) return;
+
+    const sub = client.models.Group.observeQuery({
+      filter: { adminCode: { eq: adminCode } },
+    }).subscribe({
+      next: ({ items }) => {
+        queryClient.setQueryData(['group', adminCode], items[0] || null);
+      },
+    });
+
+    return () => sub.unsubscribe();
+  }, [adminCode, queryClient]);
+
   return useQuery({
     queryKey: ['group', adminCode],
     queryFn: async () => {

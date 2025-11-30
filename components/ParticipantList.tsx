@@ -1,22 +1,31 @@
 'use client';
 
-import { useParticipants } from '@/hooks/useParticipants';
+import { useParticipants, useDeleteParticipant } from '@/hooks/useParticipants';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Copy } from 'lucide-react';
+import { Copy, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export function ParticipantList({
   groupId,
   showAssignments,
+  allowDelete,
 }: {
   groupId: string;
   showAssignments?: boolean;
+  allowDelete?: boolean;
 }) {
   const { data: participants, isLoading } = useParticipants(groupId);
+  const deleteParticipant = useDeleteParticipant();
 
   const copyLink = (accessCode: string) => {
     const url = `${window.location.origin}/participant/${accessCode}`;
     navigator.clipboard.writeText(url);
+  };
+
+  const handleDelete = (id: string) => {
+    if (confirm('Delete this participant?')) {
+      deleteParticipant.mutate({ id, groupId });
+    }
   };
 
   if (isLoading) return <div>Loading...</div>;
@@ -38,9 +47,21 @@ export function ParticipantList({
                   </div>
                 )}
               </div>
-              <Button variant="ghost" size="icon" onClick={() => copyLink(p.accessCode)}>
-                <Copy className="h-4 w-4" />
-              </Button>
+              <div className="flex gap-2">
+                <Button variant="ghost" size="icon" onClick={() => copyLink(p.accessCode)}>
+                  <Copy className="h-4 w-4" />
+                </Button>
+                {allowDelete && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleDelete(p.id)}
+                    disabled={deleteParticipant.isPending}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
             </div>
           ))}
         </div>

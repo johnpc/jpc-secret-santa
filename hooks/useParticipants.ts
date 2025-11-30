@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { generateClient } from 'aws-amplify/data';
+import { useEffect } from 'react';
 import type { Schema } from '@/amplify/data/resource';
 
 const client = generateClient<Schema>();
@@ -7,6 +8,22 @@ const client = generateClient<Schema>();
 type Participant = Schema['Participant']['type'];
 
 export function useParticipants(groupId: string) {
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (!groupId) return;
+
+    const sub = client.models.Participant.observeQuery({
+      filter: { groupId: { eq: groupId } },
+    }).subscribe({
+      next: ({ items }) => {
+        queryClient.setQueryData(['participants', groupId], items);
+      },
+    });
+
+    return () => sub.unsubscribe();
+  }, [groupId, queryClient]);
+
   return useQuery({
     queryKey: ['participants', groupId],
     queryFn: async () => {
@@ -102,6 +119,20 @@ export function useAssignSecretSanta() {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['participants', variables.groupId] });
       queryClient.invalidateQueries({ queryKey: ['group'] });
+    },
+  });
+}
+
+export function useDeleteParticipant() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, groupId }: { id: string; groupId: string }) => {
+      await client.models.Participant.delete({ id });
+      return { groupId };
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['participants', data.groupId] });
     },
   });
 }

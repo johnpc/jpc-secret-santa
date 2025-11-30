@@ -4,26 +4,26 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
+    --background: 355 25% 97%;
+    --foreground: 355 40% 15%;
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
+    --card-foreground: 355 40% 15%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 72.2% 50.6%;
-    --primary-foreground: 0 85.7% 97.3%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
+    --popover-foreground: 355 40% 15%;
+    --primary: 355 78% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 140 45% 35%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 355 20% 90%;
+    --muted-foreground: 355 15% 40%;
+    --accent: 45 95% 55%;
+    --accent-foreground: 355 40% 15%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 72.2% 50.6%;
-    --radius: 0.5rem;
+    --border: 355 20% 85%;
+    --input: 355 20% 85%;
+    --ring: 355 78% 45%;
+    --radius: 0.75rem;
   }
 }
 
@@ -32,6 +32,56 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    background:
+      radial-gradient(circle at 20% 50%, rgba(220, 38, 38, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(22, 163, 74, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 40% 20%, rgba(234, 179, 8, 0.1) 0%, transparent 40%),
+      linear-gradient(135deg, #1e3a8a 0%, #7c2d12 50%, #14532d 100%);
+    min-height: 100vh;
+    position: relative;
   }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 35px,
+        rgba(255, 255, 255, 0.03) 35px,
+        rgba(255, 255, 255, 0.03) 70px
+      ),
+      repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 35px,
+        rgba(255, 255, 255, 0.03) 35px,
+        rgba(255, 255, 255, 0.03) 70px
+      );
+    pointer-events: none;
+    z-index: 1;
+  }
+}
+
+@keyframes snowfall {
+  0% {
+    transform: translateY(-10vh) translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) translateX(10vw);
+    opacity: 0.3;
+  }
+}
+
+.snowflake {
+  position: fixed;
+  top: -10vh;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.5rem;
+  animation: snowfall linear infinite;
+  pointer-events: none;
+  z-index: 1;
 }

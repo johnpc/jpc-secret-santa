@@ -23,7 +23,7 @@ export default function AdminPage({ params }: { params: Promise<{ code: string }
           <CardTitle className="text-3xl">{group.name}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-4">
             <AddParticipant groupId={group.id} />
             <AssignButton groupId={group.id} isAssigned={group.isAssigned || false} />
           </div>

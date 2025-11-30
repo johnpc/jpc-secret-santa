@@ -37,6 +37,41 @@ export function useParticipants(groupId: string) {
 }
 
 export function useParticipant(accessCode: string) {
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (!accessCode) return;
+
+    const sub = client.models.Participant.observeQuery({
+      filter: { accessCode: { eq: accessCode } },
+    }).subscribe({
+      next: async ({ items }) => {
+        const participant = items[0];
+        if (!participant) {
+          queryClient.setQueryData(['participant', accessCode], null);
+          return;
+        }
+
+        if (participant.assignedToId) {
+          const { data: assignedData } = await client.models.Participant.get({
+            id: participant.assignedToId,
+          });
+          queryClient.setQueryData(['participant', accessCode], {
+            ...participant,
+            assignedTo: assignedData,
+          });
+        } else {
+          queryClient.setQueryData(['participant', accessCode], {
+            ...participant,
+            assignedTo: null,
+          });
+        }
+      },
+    });
+
+    return () => sub.unsubscribe();
+  }, [accessCode, queryClient]);
+
   return useQuery({
     queryKey: ['participant', accessCode],
     queryFn: async () => {

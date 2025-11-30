@@ -14,9 +14,30 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Secret Santa',
+  title: '🎅 Secret Santa',
   description: 'Organize your Secret Santa gift exchange',
 };
+
+function Snowflakes() {
+  return (
+    <>
+      {[...Array(15)].map((_, i) => (
+        <div
+          key={i}
+          className="snowflake"
+          style={{
+            left: `${Math.random() * 100}vw`,
+            animationDuration: `${8 + Math.random() * 8}s`,
+            animationDelay: `${Math.random() * 5}s`,
+            fontSize: `${0.8 + Math.random() * 1}rem`,
+          }}
+        >
+          ❄
+        </div>
+      ))}
+    </>
+  );
+}
 
 export default function RootLayout({
   children,
@@ -26,6 +47,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <Snowflakes />
         <Providers>{children}</Providers>
       </body>
     </html>
